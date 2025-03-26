@@ -1,0 +1,30 @@
+{
+    "name": "Sign P",
+    "version": "1.0.0",
+    "description": "A simple car parking management system using HTML, CSS, and JavaScript.",
+    "main": "index.html",
+    "scripts": {
+      "start": "live-server"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/Muruga202/My-first-Project.git"
+    },
+    "keywords": [
+      "parking",
+      "management",
+      "system",
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "bugs": {
+      "url": "https://github.com/Muruga202/My-first-Project.git"
+    },
+    "homepage": "https://github.com/Muruga202/My-first-Project.git",
+    "devDependencies": {
+      "live-server": "^1.2.1"
+    }
+  }
