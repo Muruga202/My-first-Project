@@ -19,7 +19,7 @@ This is a simple car parking management system built using HTML, CSS, and JavaSc
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Muruga202/My-first-project.git
+   git clone https://github.com/Muruga202/My-first-Project/tree/main
    ```
 
 2. **Navigate to the project directory**:
