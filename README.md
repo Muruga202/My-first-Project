@@ -24,7 +24,7 @@ This is a simple car parking management system built using HTML, CSS, and JavaSc
 
 2. **Navigate to the project directory**:
    ```bash
-   cd sign p
+   cd https://github.com/Muruga202/My-first-Project/tree/main
    ```
 
 3. **Open the `index.html` file in your web browser**:
