@@ -2,31 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=, initial-scale=1.0">
-    <title>Sign Up Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Spot Manager</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    
-    <div class="signup-wrapper">
-         <form action="#" method="post" class="Signup-form"
-                <h1>Sign Up</h1>
-                <div class="form-group">
-                    <label for="name">FullName:</label>
-                    <input type="text" name="name" id="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" name="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">FullName:</label>
-                    <input type="password" name="password" id="password" required>
-                </div>
-                <div class="form-group">
-                    <button type="submit">Sign Up</button>
-                </div>
-                <p>Already have an Account? <a href="login.">login</a></p>
-         </forrm>            
-     </div>
+    <h1>Parking Spot Manager</h1>
+    <form id="parkingForm">
+        <label for="carModel">Car Model:</label>
+        <input type="text" id="carModel" required>
+        <label for="parkingDuration">Duration (hours):</label>
+        <input type="number" id="parkingDuration" required>
+        <button type="submit">Book Parking</button>
+    </form>
+    <p id="availabilityStatus"></p>
+    <div id="result"></div>
+    <p id="message"></p>
+    <script src="index.js"></script>
 </body>
 </html>

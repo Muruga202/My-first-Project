@@ -1,0 +1,29 @@
+{
+  "parkingSpaces": [
+    {
+      "id": 1,
+      "carModel": "Sedan",
+      "availability": true
+    },
+    {
+      "id": 2,
+      "carModel": "SUV",
+      "availability": true
+    },
+    {
+      "id": 3,
+      "carModel": "Truck",
+      "availability": false
+    },
+    {
+      "id": 4,
+      "carModel": "Convertible",
+      "availability": true
+    },
+    {
+      "id": 5,
+      "carModel": "Coupe",
+      "availability": false
+    }
+  ]
+}
