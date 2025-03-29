@@ -1,25 +1,216 @@
 body {
+    background-image: url(img/images\ \(1\).jpeg); /* Replace with your image path */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     font-family: Arial, sans-serif;
-    margin: 20px;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
 }
 
-#result div {
-    border: 1px solid #ccc;
+
+h1 {
+    color: #ffffff;
+    font-size: 3.9em;
+    font: bold;
+    text-transform: uppercase;
+}
+
+form {
+    background: rgb(236, 124, 33);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(13, 238, 238, 0.1);
+    width: 50%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input, button {
     padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }
 
 button {
-    margin-left: 10px;
-    padding: 5px 10px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 3px;
+    background: green;
+    color: rgb(0, 0, 0);
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background: rgb(255, 255, 255);
+}
+
+.tick-out-btn {
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tick-out-btn:hover {
+    background-color: #218838;
+}
+
+.parking-slots {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.slot {
+    width: 100px;
+    height: 50px;
+    background: lightgray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.5s ease;
+}
+
+.slot.occupied {
+    background: red;
+    color: white;
+}
+.slot.available {
+    background: green;
+    color: white;
+}
+
+.vip-slot {
+    background: gold;
+}
+
+/* Parking History Table */
+.table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #eb840e;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin: auto;
+}
+
+table {
+    width: 80%;
+    margin: 20px 0;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background: #3f51b5;
+    color: white;
+}
+
+td {
+    background: #f5f5f5;
+}
+
+button.delete-btn {
+    background: black;
+    color: white;
+}
+#feedback-box button {
+    width: 100%;
+    background: #ffcc00;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#feedback-form {
+    margin-top: 10px;
+}
+
+#feedback-form textarea {
+    width: 100%;
+    height: 60px;
+    border: none;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+#feedback-container {
+    display: none; /* Hidden until checkbox is checked */
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: white;
+    padding: 10px;
+    border: 2px solid #333;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+#temperatureDataTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#temperatureDataTable th, #temperatureDataTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+#temperatureDataTable th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+h2 {
+    color: #ffffff;
+    font-size: 2.5em;
+    font: bold;
+    text-transform: uppercase;
+}
+#weather-table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+#weather-table th, #weather-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+#weather-table th {
+    background: #3f51b5;
+    color: white;
+}
+
+#weather-table td {
+    background: #f5f5f5;
 }

@@ -3,21 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parking Spot Manager</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Smart Parking System</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Parking Spot Manager</h1>
-    <form id="parkingForm">
-        <label for="carModel">Car Model:</label>
-        <input type="text" id="carModel" required>
-        <label for="parkingDuration">Duration (hours):</label>
-        <input type="number" id="parkingDuration" required>
-        <button type="submit">Book Parking</button>
+
+    <h1>Smart Parking System</h1>
+
+    <!-- Dark Mode Toggle -->
+    <button id="dark-mode-toggle">Toggle Dark Mode</button>;
+
+    <!-- Parking Form -->
+    <form id="parking-form">
+        <label for="owner-name">Owner Name:</label>
+        <input type="text" id="owner-name" required>
+
+        <label for="car-model">Car Model:</label>
+        <input type="text" id="car-model" required>
+
+        <label for="car-reg">Car Registration:</label>
+        <input type="text" id="car-reg" required>
+
+        <label for="duration">Parking Duration (in minutes):</label>
+        <input type="number" id="duration" required>
+
+        <label for="phone-number">Phone Number:</label>
+        <input type="tel" id="phone-number" required>
+
+        <label>VIP Parking?</label>
+        <input type="checkbox" id="vip-checkbox">
+
+        <button type="submit">Park My Car</button>
     </form>
-    <p id="availabilityStatus"></p>
-    <div id="result"></div>
+
     <p id="message"></p>
-    <script src="index.js"></script>
+
+    <!-- Parking Slots -->
+    <div class="parking-slots"></div>
+
+    <!-- Parking History -->
+    <div class="table-container">
+        <table id="history">
+            <thead>
+                <tr>
+                    <th>Owner Name</th>
+                    <th>Car Model</th>
+                    <th>Reg. Number</th>
+                    <th>Time Left</th>
+                    <th>Phone Number</th>
+                    <th>Slot</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Parking history will be added dynamically here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Feedback Section -->
+    <h2>🚨 Reported Violations from Feedback</h2>
+    <table id="feedback-violations">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Plate Number</th>
+                <th>Feedback</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Violations will be appended here -->
+        </tbody>
+    </table>
+    <!-- NYC Parking Violations -->
+        <h2>NYC Parking Violations</h2>
+        <table id="nycViolationsTable">
+            <thead>
+                <tr>
+                    <th>Plate</th>
+                    <th>Vehicle Make</th>
+                    <th>Issue Date</th>
+                    <th>Violation Description</th>
+                    <th>Fine Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be appended here -->
+            </tbody>
+        </table>
+    </div>
+    <form id="feedback-form">
+        <input type="text" id="plate-number" placeholder="Car Plate Number" required>
+        <textarea id="feedback" placeholder="Enter your feedback..."></textarea>
+        <label>
+            <input type="checkbox" id="negative-feedback-checkbox">
+            This is a negative feedback
+        </label>
+        <button type="submit">Submit Feedback</button>
+    </form>
+    <h2>Weather Forecast</h2>
+<table id="weather-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Max Temperature</th>
+            <th>Min Temperature</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Weather data will be appended here -->
+    </tbody>
+</table>
+
+        <div id="availabilityStatus" class="availability-status"></div>
+        <div id="result" class="result"></div>
+        
+        <!-- Countdown display -->
+        <div id="countdown" class="countdown"></div>
+    </div>
+
+    <audio id="alarmSound" src="sounds/alarm.mp3" preload="auto"></audio>
+
+    <script src="script.js"></script>
 </body>
 </html>

@@ -1,29 +1,27 @@
 {
-  "parkingSpaces": [
-    {
-      "id": 1,
-      "carModel": "Sedan",
-      "availability": true
-    },
-    {
-      "id": 2,
-      "carModel": "SUV",
-      "availability": true
-    },
-    {
-      "id": 3,
-      "carModel": "Truck",
-      "availability": false
-    },
-    {
-      "id": 4,
-      "carModel": "Convertible",
-      "availability": true
-    },
-    {
-      "id": 5,
-      "carModel": "Coupe",
-      "availability": false
-    }
-  ]
+  "latitude": 52.52,
+  "longitude": 13.419998,
+  "generationtime_ms": 0.0450611114501953,
+  "utc_offset_seconds": 0,
+  "timezone": "GMT",
+  "timezone_abbreviation": "GMT",
+  "elevation": 38,
+  "daily_units": {
+    "time": "iso8601",
+    "temperature_2m_max": "°C",
+    "temperature_2m_min": "°C"
+  },
+  "daily": {
+    "time": [
+      "2025-03-29",
+      "2025-03-30",
+      "2025-03-31",
+      "2025-04-01",
+      "2025-04-02",
+      "2025-04-03",
+      "2025-04-04"
+    ],
+    "temperature_2m_max": [14.9, 10.4, 10.3, 13.9, 15, 18.8, 17.4],
+    "temperature_2m_min": [6, 4.9, 4, 1.2, 2.3, 4.9, 2.9]
+  }
 }
