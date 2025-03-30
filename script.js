@@ -49,25 +49,25 @@ async function fetchParkingViolations() {
     // This would normally be an API call, but we'll use mock data
     const mockData = [
         {
-            plate: "ABC-1234",
+            plate: "KDA-389K",
             vehicle_make: "Toyota",
             issue_date: "2025-03-25",
             violation_description: "No Parking Zone",
-            fine_amount: "$115"
+            fine_amount: "Kshs 1,000/="
         },
         {
-            plate: "XYZ-7890",
+            plate: "KCX-342L",
             vehicle_make: "Honda",
             issue_date: "2025-03-27",
             violation_description: "Expired Meter",
-            fine_amount: "$65"
+            fine_amount: "Kshs 5000/="
         },
         {
-            plate: "DEF-5678",
+            plate: "KDA-121G",
             vehicle_make: "Ford",
             issue_date: "2025-03-28",
             violation_description: "Double Parking",
-            fine_amount: "$95"
+            fine_amount: "Kshs 2,500/="
         }
     ];
     
