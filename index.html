@@ -7,42 +7,48 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <h1>Smart Parking System</h1>
-
+    
     <!-- Dark Mode Toggle -->
-    <button id="dark-mode-toggle">Toggle Dark Mode</button>;
-
+    <button id="dark-mode-toggle">Toggle Dark Mode</button>
+    
     <!-- Parking Form -->
     <form id="parking-form">
         <label for="owner-name">Owner Name:</label>
         <input type="text" id="owner-name" required>
-
+        
         <label for="car-model">Car Model:</label>
         <input type="text" id="car-model" required>
-
+        
         <label for="car-reg">Car Registration:</label>
-        <input type="text" id="car-reg" required>
-
+        <input type="text" id="car-reg" placeholder="Format: ABC-1234" required>
+        
         <label for="duration">Parking Duration (in minutes):</label>
         <input type="number" id="duration" required>
-
+        
         <label for="phone-number">Phone Number:</label>
-        <input type="tel" id="phone-number" required>
-
+        <input type="tel" id="phone-number" placeholder="10 digits" required>
+        
         <label>VIP Parking?</label>
         <input type="checkbox" id="vip-checkbox">
-
+        
         <button type="submit">Park My Car</button>
     </form>
-
+    
     <p id="message"></p>
-
+    
+    <!-- Search Container -->
+    <div class="search-container">
+        <label for="search-input">Search Car Models:</label>
+        <input type="text" id="search-input" placeholder="Search by car model...">
+    </div>
+    
     <!-- Parking Slots -->
     <div class="parking-slots"></div>
-
+    
     <!-- Parking History -->
     <div class="table-container">
+        <h2>Current Parking</h2>
         <table id="history">
             <thead>
                 <tr>
@@ -60,8 +66,10 @@
             </tbody>
         </table>
     </div>
-
+    
     <!-- Feedback Section -->
+    <div id="feedback-container"></div>
+    
     <h2>🚨 Reported Violations from Feedback</h2>
     <table id="feedback-violations">
         <thead>
@@ -76,23 +84,25 @@
             <!-- Violations will be appended here -->
         </tbody>
     </table>
-    <!-- NYC Parking Violations -->
-        <h2>NYC Parking Violations</h2>
-        <table id="nycViolationsTable">
-            <thead>
-                <tr>
-                    <th>Plate</th>
-                    <th>Vehicle Make</th>
-                    <th>Issue Date</th>
-                    <th>Violation Description</th>
-                    <th>Fine Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data will be appended here -->
-            </tbody>
-        </table>
-    </div>
+    
+    <h2>Parking Violations</h2>
+    <table id="nycViolationsTable">
+        <thead>
+            <tr>
+                <th>Plate</th>
+                <th>Vehicle Make</th>
+                <th>Issue Date</th>
+                <th>Violation Description</th>
+                <th>Fine Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be appended here -->
+        </tbody>
+    </table>
+    
+    <!-- Feedback Form -->
+    <h2>Submit Feedback</h2>
     <form id="feedback-form">
         <input type="text" id="plate-number" placeholder="Car Plate Number" required>
         <textarea id="feedback" placeholder="Enter your feedback..."></textarea>
@@ -102,29 +112,38 @@
         </label>
         <button type="submit">Submit Feedback</button>
     </form>
+    
+    <!-- Temperature Data -->
+    <h2>Temperature Data</h2>
+    <table id="temperatureDataTable">
+        <thead>
+            <tr>
+                <th>Temperature</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Temperature data will be added dynamically -->
+        </tbody>
+    </table>
+    
+    <!-- Weather Forecast -->
     <h2>Weather Forecast</h2>
-<table id="weather-table">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Max Temperature</th>
-            <th>Min Temperature</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Weather data will be appended here -->
-    </tbody>
-</table>
-
-        <div id="availabilityStatus" class="availability-status"></div>
-        <div id="result" class="result"></div>
-        
-        <!-- Countdown display -->
-        <div id="countdown" class="countdown"></div>
-    </div>
-
+    <table id="weather-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Max Temperature</th>
+                <th>Min Temperature</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Weather data will be added dynamically -->
+        </tbody>
+    </table>
+    
     <audio id="alarmSound" src="sounds/alarm.mp3" preload="auto"></audio>
-
+    
     <script src="script.js"></script>
 </body>
 </html>
