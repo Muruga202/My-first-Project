@@ -1,5 +1,26 @@
 {
   "dependencies": {
     "json-server": "^1.0.0-beta.3"
-  }
+  },
+  "name": "smart-parking-system",
+  "version": "1.0.0",
+  "description": "This is a simple car parking management system built using HTML, CSS, and JavaScript. The system allows users to input the model of their vehicle, specify the parking duration, and provide confidential details. It then checks the availability of parking spaces based on the vehicle model.",
+  "main": "script.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Muruga202/Smart-Parking-System.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Muruga202/Smart-Parking-System/issues"
+  },
+  "homepage": "https://github.com/Muruga202/Smart-Parking-System#readme"
 }

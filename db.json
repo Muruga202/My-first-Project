@@ -1,27 +1,139 @@
 {
-  "latitude": 52.52,
-  "longitude": 13.419998,
-  "generationtime_ms": 0.0450611114501953,
-  "utc_offset_seconds": 0,
-  "timezone": "GMT",
-  "timezone_abbreviation": "GMT",
-  "elevation": 38,
-  "daily_units": {
-    "time": "iso8601",
-    "temperature_2m_max": "°C",
-    "temperature_2m_min": "°C"
+  "parkingSlots": [
+    { "id": "A1", "status": "occupied", "licenseId": "ABC-1234", "vehicleType": "car", "checkInTime": "2025-03-31T08:00:00", "driverId": 1 },
+    { "id": "A2", "status": "occupied", "licenseId": "LMN-5544", "vehicleType": "car", "checkInTime": "2025-03-31T09:30:00", "driverId": 2 },
+    { "id": "A3", "status": "available", "licenseId": null, "vehicleType": null, "checkInTime": null, "driverId": null },
+    { "id": "A4", "status": "occupied", "licenseId": "PQR-7788", "vehicleType": "car", "checkInTime": "2025-03-31T08:45:00", "driverId": 3 },
+    { "id": "B1", "status": "reserved", "licenseId": "JKL-1357", "vehicleType": "car", "checkInTime": null, "driverId": 4 },
+    { "id": "B2", "status": "available", "licenseId": null, "vehicleType": null, "checkInTime": null, "driverId": null },
+    { "id": "B3", "status": "occupied", "licenseId": "STU-9900", "vehicleType": "truck", "checkInTime": "2025-03-31T06:50:00", "driverId": 5 },
+    { "id": "B4", "status": "occupied", "licenseId": "VWX-1122", "vehicleType": "car", "checkInTime": "2025-03-31T09:10:00", "driverId": 6 },
+    { "id": "C1", "status": "available", "licenseId": null, "vehicleType": null, "checkInTime": null, "driverId": null },
+    { "id": "C2", "status": "reserved", "licenseId": "YZA-3344", "vehicleType": "car", "checkInTime": null, "driverId": 7 },
+    { "id": "C3", "status": "occupied", "licenseId": "GHI-2468", "vehicleType": "car", "checkInTime": "2025-03-31T06:00:00", "driverId": 8 },
+    { "id": "C4", "status": "available", "licenseId": null, "vehicleType": null, "checkInTime": null, "driverId": null },
+    { "id": "D1", "status": "occupied", "licenseId": "BCD-5566", "vehicleType": "motorcycle", "checkInTime": "2025-03-31T08:55:00", "driverId": 9 },
+    { "id": "D2", "status": "occupied", "licenseId": "XYZ-9876", "vehicleType": "car", "checkInTime": "2025-03-31T07:25:00", "driverId": 10 },
+    { "id": "D3", "status": "available", "licenseId": null, "vehicleType": null, "checkInTime": null, "driverId": null },
+    { "id": "D4", "status": "reserved", "licenseId": "EFG-7788", "vehicleType": "car", "checkInTime": null, "driverId": 11 },
+    { "id": "E1", "status": "available", "licenseId": null, "vehicleType": null, "checkInTime": null, "driverId": null },
+    { "id": "E2", "status": "occupied", "licenseId": "HIJ-9900", "vehicleType": "car", "checkInTime": "2025-03-31T09:45:00", "driverId": 12 },
+    { "id": "E3", "status": "available", "licenseId": null, "vehicleType": null, "checkInTime": null, "driverId": null },
+    { "id": "E4", "status": "available", "licenseId": null, "vehicleType": null, "checkInTime": null, "driverId": null }
+  ],
+  "drivers": [
+    { "id": 1, "name": "John Smith", "phone": "555-1234", "email": "john@example.com" },
+    { "id": 2, "name": "Sarah Johnson", "phone": "555-2345", "email": "sarah@example.com" },
+    { "id": 3, "name": "Michael Brown", "phone": "555-3456", "email": "michael@example.com" },
+    { "id": 4, "name": "Emily Davis", "phone": "555-4567", "email": "emily@example.com" },
+    { "id": 5, "name": "Robert Wilson", "phone": "555-5678", "email": "robert@example.com" },
+    { "id": 6, "name": "Jennifer Taylor", "phone": "555-6789", "email": "jennifer@example.com" },
+    { "id": 7, "name": "David Miller", "phone": "555-7890", "email": "david@example.com" },
+    { "id": 8, "name": "Lisa Anderson", "phone": "555-8901", "email": "lisa@example.com" },
+    { "id": 9, "name": "James Thomas", "phone": "555-9012", "email": "james@example.com" },
+    { "id": 10, "name": "Patricia White", "phone": "555-0123", "email": "patricia@example.com" },
+    { "id": 11, "name": "Richard Harris", "phone": "555-1235", "email": "richard@example.com" },
+    { "id": 12, "name": "Susan Martin", "phone": "555-2346", "email": "susan@example.com" }
+  ],
+  "activities": [
+    { "id": 1, "time": "2025-03-31T10:45:00", "action": "check-in", "slot": "A1", "licenseId": "ABC-1234", "duration": "2:45" },
+    { "id": 2, "time": "2025-03-31T10:30:00", "action": "check-in", "slot": "D2", "licenseId": "XYZ-9876", "duration": "2:35" },
+    { "id": 3, "time": "2025-03-31T10:15:00", "action": "check-out", "slot": "B2", "licenseId": "DEF-5678", "duration": "3:20" },
+    { "id": 4, "time": "2025-03-31T09:55:00", "action": "check-in", "slot": "C3", "licenseId": "GHI-2468", "duration": "4:20" },
+    { "id": 5, "time": "2025-03-31T09:40:00", "action": "reservation", "slot": "B1", "licenseId": "JKL-1357", "duration": null }
+  ],
+  "records": [
+    {
+      "id": 1,
+      "date": "2025-03-31",
+      "licenseId": "ABC-1234",
+      "slot": "A1",
+      "checkIn": "08:00",
+      "checkOut": null,
+      "duration": "2:45",
+      "amount": 5.50,
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "date": "2025-03-31",
+      "licenseId": "DEF-5678",
+      "slot": "B2",
+      "checkIn": "07:00",
+      "checkOut": "10:15",
+      "duration": "3:15",
+      "amount": 6.50,
+      "status": "Completed"
+    },
+    {
+      "id": 3,
+      "date": "2025-03-31",
+      "licenseId": "GHI-2468",
+      "slot": "C3",
+      "checkIn": "06:00",
+      "checkOut": null,
+      "duration": "4:20",
+      "amount": 8.50,
+      "status": "Active"
+    },
+    {
+      "id": 4,
+      "date": "2025-03-30",
+      "licenseId": "JKL-1357",
+      "slot": "D4",
+      "checkIn": "14:00",
+      "checkOut": "18:30",
+      "duration": "4:30",
+      "amount": 9.00,
+      "status": "Completed"
+    },
+    {
+      "id": 5,
+      "date": "2025-03-30",
+      "licenseId": "MNO-3690",
+      "slot": "A3",
+      "checkIn": "09:15",
+      "checkOut": "15:45",
+      "duration": "6:30",
+      "amount": 13.00,
+      "status": "Completed"
+    }
+  ],
+  "settings": {
+    "hourlyRate": 2.00,
+    "gracePeriod": 15,
+    "maxDuration": 24,
+    "reservationFee": 5.00,
+    "darkMode": false
   },
-  "daily": {
-    "time": [
-      "2025-03-29",
-      "2025-03-30",
-      "2025-03-31",
-      "2025-04-01",
-      "2025-04-02",
-      "2025-04-03",
-      "2025-04-04"
-    ],
-    "temperature_2m_max": [14.9, 10.4, 10.3, 13.9, 15, 18.8, 17.4],
-    "temperature_2m_min": [6, 4.9, 4, 1.2, 2.3, 4.9, 2.9]
-  }
+  "stats": {
+    "totalSpaces": 20,
+    "availableSpaces": 8,
+    "occupiedSpaces": 9,
+    "reservedSpaces": 3,
+    "dailyRevenue": 42.50,
+    "weeklyRevenue": 287.50,
+    "monthlyRevenue": 1245.00,
+    "averageParkingDuration": 3.5
+  },
+  "feedback": [
+    {
+      "id": 1,
+      "date": "2025-03-30",
+      "message": "Great service, but the payment system was a bit slow.",
+      "rating": 4
+    },
+    {
+      "id": 2,
+      "date": "2025-03-29",
+      "message": "The parking spaces are too narrow for large vehicles.",
+      "rating": 3
+    },
+    {
+      "id": 3,
+      "date": "2025-03-28",
+      "message": "Very efficient system, love the mobile app integration!",
+      "rating": 5
+    }
+  ]
 }

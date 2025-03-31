@@ -1,196 +1,279 @@
+/* Basic styling for the parking system */
 body {
-    background-image: url(img/images\ \(1\).jpeg); /* Replace with your image path */
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
     font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-
-h1 {
-    color: #ffffff;
-    font-size: 3.9em;
-    font: bold;
-    text-transform: uppercase;
+h1, h2 {
+    color: #333;
+    text-align: center;
 }
 
+/* Form styling */
 form {
-    background: rgb(236, 124, 33);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+    background-color: #f5f5f5;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(13, 238, 238, 0.1);
-    width: 50%;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
 }
 
-input, button {
-    padding: 10px;
+label {
+    font-weight: bold;
+}
+
+input, textarea {
+    padding: 8px;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    border: 1px solid #ccc;
 }
 
 button {
-    background: green;
-    color: rgb(0, 0, 0);
-    cursor: pointer;
-}
-
-button:hover {
-    background: rgb(255, 255, 255);
-}
-
-.tick-out-btn {
-    padding: 5px 10px;
-    background-color: #28a745;
+    padding: 10px 15px;
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-weight: bold;
 }
 
-.tick-out-btn:hover {
-    background-color: #218838;
+button:hover {
+    background-color: #45a049;
 }
 
+#message {
+    text-align: center;
+    font-weight: bold;
+    height: 20px;
+    margin: 10px 0;
+}
+
+/* Parking slots */
 .parking-slots {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
-    flex-wrap: wrap;
+    margin-bottom: 30px;
 }
 
 .slot {
-    width: 100px;
-    height: 50px;
-    background: lightgray;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    border-radius: 5px;
-    transition: background-color 0.5s ease;
-}
-
-.slot.occupied {
-    background: red;
-    color: white;
-}
-.slot.available {
-    background: green;
-    color: white;
-}
-
-.vip-slot {
-    background: gold;
-}
-
-/* Parking History Table */
-.table-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-top: 20px;
     padding: 20px;
-    background-color: #eb840e;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    margin: auto;
+    background-color: #e0f7e0;
+    border: 1px solid #4CAF50;
+    text-align: center;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.occupied {
+    background-color: #ff6b6b;
+    border-color: #ff3333;
+    color: white;
+}
+
+/* Tables */
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 30px;
 }
 
 table {
-    width: 80%;
-    margin: 20px 0;
+    width: 100%;
     border-collapse: collapse;
-    background: white;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    margin-bottom: 30px;
 }
 
 th, td {
     border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
+    padding: 12px;
+    text-align: left;
 }
 
 th {
-    background: #3f51b5;
-    color: white;
-    text-align: center;
-}
-
-td {
-    background: #f5f5f5;
-}
-
-button.delete-btn {
-    background: black;
-    color: white;
-}
-#feedback-box button {
-    width: 100%;
-    background: #ffcc00;
-    border: none;
-    padding: 8px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-#feedback-form {
-    margin-top: 10px;
-}
-
-#feedback-form textarea {
-    width: 100%;
-    height: 60px;
-    border: none;
-    border-radius: 4px;
-    padding: 5px;
-}
-
-#feedback-container {
-    display: none; /* Hidden until checkbox is checked */
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    background: white;
-    padding: 10px;
-    border: 2px solid #333;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    z-index: 1000;
-}
-
-#temperatureDataTable {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#temperatureDataTable th, #temperatureDataTable td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
-
-#temperatureDataTable th {
     background-color: #4CAF50;
     color: white;
 }
 
-h2 {
-    color: #ffffff;
-    font-size: 2.5em;
-    font: bold;
-    text-transform: uppercase;
-    text-align: center;
+tr:nth-child(even) {
+    background-color: #f2f2f2;
 }
+
+.delete-btn {
+    background-color: #f44336;
+    margin-left: 5px;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Feedback form */
+#feedback-form {
+    grid-template-columns: 1fr;
+}
+
+#feedback-form textarea {
+    height: 80px;
+    width: 100%;
+}
+
+/* Search container */
+.search-container {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#search-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Dark mode */
+.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+
+.dark-mode h1, .dark-mode h2 {
+    color: #fff;
+}
+
+.dark-mode form {
+    background-color: #444;
+}
+
+.dark-mode input, .dark-mode textarea {
+    background-color: #555;
+    color: #fff;
+    border-color: #666;
+}
+
+.dark-mode .slot {
+    background-color: #555;
+    border-color: #777;
+    color: #fff;
+}
+
+.dark-mode .occupied {
+    background-color: #8b0000;
+    border-color: #550000;
+}
+
+.dark-mode table, .dark-mode th, .dark-mode td {
+    border-color: #666;
+}
+
+.dark-mode th {
+    background-color: #555;
+}
+
+.dark-mode tr:nth-child(even) {
+    background-color: #444;
+}
+
+.dark-mode tr:nth-child(odd) {
+    background-color: #333;
+}
+
+/* Negative feedback */
+.negative-feedback {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+.dark-mode .negative-feedback {
+    color: #ff6666;
+}
+
+/* Toggle switch for dark mode */
+#dark-mode-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #555;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    form {
+        grid-template-columns: 1fr;
+    }
     
+    .parking-slots {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.slot, form, table {
+    animation: fadeIn 0.5s;
+}
+
+/* Timer styles */
+[id^="timer-"] {
+    font-weight: bold;
+}
+/* Timer display styles */
+.timer-display {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 5px;
+    margin: 5px 0;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.active-timer {
+    background: #4CAF50;
+    color: white;
+}
+
+.warning {
+    background: #ffa500;
+    color: white;
+    animation: pulse 1s infinite;
+}
+
+.critical {
+    background: #ff6b6b;
+    color: white;
+    animation: pulse 0.5s infinite;
+}
+
+.expired {
+    background: #ff0000;
+    color: white;
+    animation: none;
+}
+
+.flash {
+    animation: flash 0.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@keyframes flash {
+    0% { background-color: #ff0000; }
+    50% { background-color: #ff6b6b; }
+    100% { background-color: #ff0000; }
+}

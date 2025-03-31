@@ -2,141 +2,804 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Parking System</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Smart Parking Management System</title>
+    <style>
+        /* Basic styling for the parking system */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        /* Form styling */
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #message {
+            text-align: center;
+            font-weight: bold;
+            height: 20px;
+            margin: 10px 0;
+        }
+
+        /* Parking slots */
+        .parking-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .slot {
+            padding: 20px;
+            background-color: #e0f7e0;
+            border: 1px solid #4CAF50;
+            text-align: center;
+            border-radius: 4px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .occupied {
+            background-color: #ff6b6b;
+            border-color: #ff3333;
+            color: white;
+        }
+
+        .reserved {
+            background-color: #ffdb58;
+            border-color: #ffc107;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            margin-left: 5px;
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Feedback form */
+        #feedback-form {
+            grid-template-columns: 1fr;
+        }
+
+        #feedback-form textarea {
+            height: 80px;
+            width: 100%;
+        }
+
+        /* Search container */
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #search-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* Dark mode */
+        .dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .dark-mode h1, .dark-mode h2 {
+            color: #fff;
+        }
+
+        .dark-mode form {
+            background-color: #444;
+        }
+
+        .dark-mode input, .dark-mode textarea, .dark-mode select {
+            background-color: #555;
+            color: #fff;
+            border-color: #666;
+        }
+
+        .dark-mode .slot {
+            background-color: #555;
+            border-color: #777;
+            color: #fff;
+        }
+
+        .dark-mode .occupied {
+            background-color: #8b0000;
+            border-color: #550000;
+        }
+
+        .dark-mode .reserved {
+            background-color: #8b6000;
+            border-color: #6b4000;
+        }
+
+        .dark-mode table, .dark-mode th, .dark-mode td {
+            border-color: #666;
+        }
+
+        .dark-mode th {
+            background-color: #555;
+        }
+
+        .dark-mode tr:nth-child(even) {
+            background-color: #444;
+        }
+
+        .dark-mode tr:nth-child(odd) {
+            background-color: #333;
+        }
+
+        /* Negative feedback */
+        .negative-feedback {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .dark-mode .negative-feedback {
+            color: #ff6666;
+        }
+
+        /* Toggle switch for dark mode */
+        #dark-mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #555;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+            
+            .parking-slots {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slot, form, table {
+            animation: fadeIn 0.5s;
+        }
+
+        /* Timer styles */
+        [id^="timer-"] {
+            font-weight: bold;
+            font-size: 12px;
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+        }
+
+        /* Dashboard stats */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .dark-mode .stat-card {
+            background-color: #444;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .dark-mode .stat-card h3 {
+            color: #ccc;
+        }
+
+        .stat-card h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .total-spaces {
+            border-left: 4px solid #3498db;
+        }
+
+        .available-spaces {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .occupied-spaces {
+            border-left: 4px solid #f44336;
+        }
+
+        .reserved-spaces {
+            border-left: 4px solid #ffc107;
+        }
+
+        /* Header with logo */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #4CAF50;
+        }
+
+        .dark-mode .logo span {
+            color: #6ecf72;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+        }
+
+        .tab.active {
+            background-color: #f5f5f5;
+            border-color: #ddd;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .dark-mode .tab.active {
+            background-color: #444;
+            border-color: #666;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <h1>Smart Parking System</h1>
-    
-    <!-- Dark Mode Toggle -->
-    <button id="dark-mode-toggle">Toggle Dark Mode</button>
-    
-    <!-- Parking Form -->
-    <form id="parking-form">
-        <label for="owner-name">Owner Name:</label>
-        <input type="text" id="owner-name" required>
-        
-        <label for="car-model">Car Model:</label>
-        <input type="text" id="car-model" required>
-        
-        <label for="car-reg">Car Registration:</label>
-        <input type="text" id="car-reg" placeholder="Format: ABC-1234" required>
-        
-        <label for="duration">Parking Duration (in minutes):</label>
-        <input type="number" id="duration" required>
-        
-        <label for="phone-number">Phone Number:</label>
-        <input type="tel" id="phone-number" placeholder="10 digits" required>
-        
-        <label>VIP Parking?</label>
-        <input type="checkbox" id="vip-checkbox">
-        
-        <button type="submit">Park My Car</button>
-    </form>
-
-    
-    <!-- Parking Slots -->
-    <div class="parking-slots"></div>
-    
-    <!-- Parking History -->
-    <div class="table-container">
-        <h2>Current Parking</h2>
-        <table id="history">
-            <thead>
-                <tr>
-                    <th>Owner Name</th>
-                    <th>Car Model</th>
-                    <th>Reg. Number</th>
-                    <th>Time Left</th>
-                    <th>Phone Number</th>
-                    <th>Slot</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Parking history will be added dynamically here -->
-            </tbody>
-        </table>
+    <div class="header">
+        <div class="logo">Park<span>Smart</span></div>
+        <button id="dark-mode-toggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
     </div>
-    
-    <!-- Feedback Section -->
-    <div id="feedback-container"></div>
-    
-    <h2>🚨 Reported Violations from Feedback</h2>
-    <table id="feedback-violations">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Plate Number</th>
-                <th>Feedback</th>
-                <th>Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Violations will be appended here -->
-        </tbody>
-    </table>
-    
-    <h2>Parking Violations</h2>
-    <table id="nycViolationsTable">
-        <thead>
-            <tr>
-                <th>Plate</th>
-                <th>Vehicle Make</th>
-                <th>Issue Date</th>
-                <th>Violation Description</th>
-                <th>Fine Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Data will be appended here -->
-        </tbody>
-    </table>
-    
-    <!-- Feedback Form -->
-    <h2>Submit Feedback</h2>
-    <form id="feedback-form">
-        <input type="text" id="plate-number" placeholder="Car Plate Number" required>
-        <textarea id="feedback" placeholder="Enter your feedback..."></textarea>
-        <label>
-            <input type="checkbox" id="negative-feedback-checkbox">
-            This is a negative feedback
-        </label>
-        <button type="submit">Submit Feedback</button>
-    </form>
-    
-    <!-- Temperature Data -->
-    <h2>Temperature Data</h2>
-    <table id="temperatureDataTable">
-        <thead>
-            <tr>
-                <th>Temperature</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Temperature data will be added dynamically -->
-        </tbody>
-    </table>
-    
-    <!-- Weather Forecast -->
-    <h2>Weather Forecast</h2>
-    <table id="weather-table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Max Temperature</th>
-                <th>Min Temperature</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Weather data will be added dynamically -->
-        </tbody>
-    </table>
-    
-    <audio id="alarmSound" src="sounds/alarm.mp3" preload="auto"></audio>
-    
-    <script src="script.js"></script>
+
+    <h1>Smart Parking Management System</h1>
+
+    <div class="tabs">
+        <div class="tab active" onclick="openTab('dashboard')">Dashboard</div>
+        <div class="tab" onclick="openTab('check-in')">Check In</div>
+        <div class="tab" onclick="openTab('check-out')">Check Out</div>
+        <div class="tab" onclick="openTab('records')">Records</div>
+        <div class="tab" onclick="openTab('settings')">Settings</div>
+    </div>
+
+    <div id="dashboard" class="tab-content active">
+        <div class="stats-container">
+            <div class="stat-card total-spaces">
+                <h3>TOTAL SPACES</h3>
+                <h2>20</h2>
+            </div>
+            <div class="stat-card available-spaces">
+                <h3>AVAILABLE</h3>
+                <h2>8</h2>
+            </div>
+            <div class="stat-card occupied-spaces">
+                <h3>OCCUPIED</h3>
+                <h2>9</h2>
+            </div>
+            <div class="stat-card reserved-spaces">
+                <h3>RESERVED</h3>
+                <h2>3</h2>
+            </div>
+        </div>
+
+        <h2>Parking Layout</h2>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search by license plate...">
+            <button onclick="searchVehicle()">Search</button>
+        </div>
+
+        <div class="parking-slots">
+            <div class="slot occupied">
+                A1
+                <div id="timer-A1">2:45</div>
+            </div>
+            <div class="slot occupied">
+                A2
+                <div id="timer-A2">0:30</div>
+            </div>
+            <div class="slot">A3</div>
+            <div class="slot occupied">
+                A4
+                <div id="timer-A4">1:15</div>
+            </div>
+            <div class="slot reserved">
+                B1
+                <div id="timer-B1">Reserved</div>
+            </div>
+            <div class="slot">B2</div>
+            <div class="slot occupied">
+                B3
+                <div id="timer-B3">3:10</div>
+            </div>
+            <div class="slot occupied">
+                B4
+                <div id="timer-B4">0:50</div>
+            </div>
+            <div class="slot">C1</div>
+            <div class="slot reserved">
+                C2
+                <div id="timer-C2">Reserved</div>
+            </div>
+            <div class="slot occupied">
+                C3
+                <div id="timer-C3">4:20</div>
+            </div>
+            <div class="slot">C4</div>
+            <div class="slot occupied">
+                D1
+                <div id="timer-D1">1:05</div>
+            </div>
+            <div class="slot occupied">
+                D2
+                <div id="timer-D2">2:35</div>
+            </div>
+            <div class="slot">D3</div>
+            <div class="slot reserved">
+                D4
+                <div id="timer-D4">Reserved</div>
+            </div>
+            <div class="slot">E1</div>
+            <div class="slot occupied">
+                E2
+                <div id="timer-E2">0:15</div>
+            </div>
+            <div class="slot">E3</div>
+            <div class="slot">E4</div>
+        </div>
+
+        <h2>Recent Activity</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Activity</th>
+                        <th>Slot</th>
+                        <th>License Plate</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>10:45 AM</td>
+                        <td>Check In</td>
+                        <td>A1</td>
+                        <td>KBR-693L</td>
+                        <td>2:45</td>
+                    </tr>
+                    <tr>
+                        <td>10:30 AM</td>
+                        <td>Check In</td>
+                        <td>D2</td>
+                        <td>KCB-298B</td>
+                        <td>2:35</td>
+                    </tr>
+                    <tr>
+                        <td>10:15 AM</td>
+                        <td>Check Out</td>
+                        <td>B2</td>
+                        <td>KCF-201F</td>
+                        <td>3:20</td>
+                    </tr>
+                    <tr>
+                        <td>09:55 AM</td>
+                        <td>Check In</td>
+                        <td>C3</td>
+                        <td>KBV-246B</td>
+                        <td>4:20</td>
+                    </tr>
+                    <tr>
+                        <td>09:40 AM</td>
+                        <td>Reservation</td>
+                        <td>B1</td>
+                        <td>KDK-001J</td>
+                        <td>-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="check-in" class="tab-content">
+        <h2>Vehicle Check-In</h2>
+        <form id="check-in-form">
+            <label for="license-plate">License Plate:</label>
+            <input type="text" id="license-plate" required>
+            
+            <label for="vehicle-type">Vehicle Type:</label>
+            <select id="vehicle-type">
+                <option value="car">Car</option>
+                <option value="motorcycle">Motorcycle</option>
+                <option value="truck">Truck</option>
+            </select>
+            
+            <label for="driver-name">Driver Name:</label>
+            <input type="text" id="driver-name">
+            
+            <label for="driver-phone">Driver Phone:</label>
+            <input type="tel" id="driver-phone">
+            
+            <label for="parking-slot">Parking Slot:</label>
+            <select id="parking-slot">
+                <option value="A3">A3</option>
+                <option value="B2">B2</option>
+                <option value="C1">C1</option>
+                <option value="C4">C4</option>
+                <option value="D3">D3</option>
+                <option value="E1">E1</option>
+                <option value="E3">E3</option>
+                <option value="E4">E4</option>
+            </select>
+            
+            <label for="check-in-time">Check-In Time:</label>
+            <input type="time" id="check-in-time" value="10:00">
+            
+            <div></div>
+            <button type="submit">Check In Vehicle</button>
+        </form>
+        <div id="check-in-message"></div>
+    </div>
+
+    <div id="check-out" class="tab-content">
+        <h2>Vehicle Check-Out</h2>
+        <form id="check-out-form">
+            <label for="checkout-license-plate">License Plate:</label>
+            <input type="text" id="checkout-license-plate" required>
+            
+            <label for="checkout-slot">Parking Slot:</label>
+            <select id="checkout-slot">
+                <option value="A1">A1</option>
+                <option value="A2">A2</option>
+            
+                <option value="A4">A4</option>
+                <option value="B3">B3</option>
+                <option value="B4">B4</option>
+                <option value="C3">C3</option>
+                <option value="D1">D1</option>
+                <option value="D2">D2</option>
+                <option value="E2">E2</option>
+            </select>
+            
+            <label for="check-out-time">Check-Out Time:</label>
+            <input type="time" id="check-out-time" value="14:00">
+            
+            <label for="payment-method">Payment Method:</label>
+            <select id="payment-method">
+                <option value="cash">Cash</option>
+                <option value="credit">Credit Card</option>
+                <option value="debit">Debit Card</option>
+                <option value="mobile">Mobile Payment</option>
+            </select>
+            
+            <div></div>
+            <button type="submit">Complete Check-Out</button>
+        </form>
+        <div id="check-out-message"></div>
+    </div>
+
+    <div id="records" class="tab-content">
+        <h2>Parking Records</h2>
+        <div class="search-container">
+            <input type="text" id="records-search" placeholder="Search records...">
+            <button onclick="searchRecords()">Search</button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>License Plate</th>
+                        <th>Slot</th>
+                        <th>Check-In</th>
+                        <th>Check-Out</th>
+                        <th>Duration</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2025-03-31</td>
+                        <td>KBC-871G</td>
+                        <td>A1</td>
+                        <td>08:00</td>
+                        <td>--:--</td>
+                        <td>2:45</td>
+                        <td>Ksh 100/=</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>2025-03-31</td>
+                        <td>KDF-987L</td>
+                        <td>B2</td>
+                        <td>07:00</td>
+                        <td>10:15</td>
+                        <td>3:15</td>
+                        <td>Ksh 200/=</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>2025-03-31</td>
+                        <td>KCA-021H</td>
+                        <td>C3</td>
+                        <td>06:00</td>
+                        <td>--:--</td>
+                        <td>4:20</td>
+                        <td>Ksh 350/=</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>2025-03-30</td>
+                        <td>KDA-135T</td>
+                        <td>D4</td>
+                        <td>14:00</td>
+                        <td>18:30</td>
+                        <td>4:30</td>
+                        <td>Ksh 550/=</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>2025-03-30</td>
+                        <td>MNO-3690</td>
+                        <td>A3</td>
+                        <td>09:15</td>
+                        <td>15:45</td>
+                        <td>6:30</td>
+                        <td>Ksh 850/=</td>
+                        <td>Completed</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="settings" class="tab-content">
+        <h2>System Settings</h2>
+        <form id="settings-form">
+            <label for="parking-rate">Hourly Rate ($):</label>
+            <input type="number" id="parking-rate" value="2.00" step="0.50" min="0">
+            
+            <label for="grace-period">Grace Period (minutes):</label>
+            <input type="number" id="grace-period" value="15" min="0">
+            
+            <label for="max-duration">Maximum Duration (hours):</label>
+            <input type="number" id="max-duration" value="24" min="1">
+            
+            <label for="reservation-fee">Reservation Fee ($):</label>
+            <input type="number" id="reservation-fee" value="5.00" step="0.50" min="0">
+            
+            <div></div>
+            <button type="submit">Save Settings</button>
+        </form>
+        
+        <h2>Feedback</h2>
+        <form id="feedback-form">
+            <label for="feedback">Share your feedback or report issues:</label>
+            <textarea id="feedback" placeholder="Enter your feedback here..."></textarea>
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+
+    <script>
+        // Function to toggle dark mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const button = document.getElementById('dark-mode-toggle');
+            if (document.body.classList.contains('dark-mode')) {
+                button.textContent = '☀️ Light Mode';
+            } else {
+                button.textContent = '🌙 Dark Mode';
+            }
+        }
+        
+        // Function to open tabs
+        function openTab(tabName) {
+            // Hide all tab content
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            // Remove active class from all tabs
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            // Show the selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to the clicked tab
+            const activeTab = document.querySelector(`.tab[onclick="openTab('${tabName}')"]`);
+            activeTab.classList.add('active');
+        }
+        
+        // Function to search for a vehicle
+        function searchVehicle() {
+            const searchInput = document.getElementById('search-input').value.toUpperCase();
+            if (searchInput) {
+                alert(`Searching for vehicle with license plate: ${searchInput}`);
+                // In a real application, this would search the database
+            }
+        }
+        
+        // Function to search records
+        function searchRecords() {
+            const searchInput = document.getElementById('records-search').value.toUpperCase();
+            if (searchInput) {
+                alert(`Searching records for: ${searchInput}`);
+                // In a real application, this would filter the records
+            }
+        }
+        
+        // Form submission handlers
+        document.getElementById('check-in-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const licenseInput = document.getElementById('license-plate');
+            const slotInput = document.getElementById('parking-slot');
+            
+            const message = document.getElementById('check-in-message');
+            message.textContent = `Vehicle ${licenseInput.value} checked in to slot ${slotInput.value}`;
+            message.style.color = 'green';
+            
+            // Reset form
+            licenseInput.value = '';
+        });
+        
+        document.getElementById('check-out-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const licenseInput = document.getElementById('checkout-license-plate');
+            const slotInput = document.getElementById('checkout-slot');
+            
+            const message = document.getElementById('check-out-message');
+            message.textContent = `Vehicle ${licenseInput.value} checked out from slot ${slotInput.value}`;
+            message.style.color = 'green';
+            
+            // Reset form
+            licenseInput.value = '';
+        });
+        
+        document.getElementById('settings-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Settings saved successfully!');
+        });
+        
+        document.getElementById('feedback-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const feedbackInput = document.getElementById('feedback');
+            alert('Thank you for your feedback!');
+            feedbackInput.value = '';
+        });
+        
+        // Timer simulation
+        function updateTimers() {
+            const timerElements = document.querySelectorAll('[id^="timer-"]');
+            timerElements.forEach(timer => {
+                if (timer.textContent !== 'Reserved') {
+                    const [hours, minutes] = timer.textContent.split(':').map(Number);
+                    let totalMinutes = hours * 60 + minutes;
+                    totalMinutes += 1;
+                    
+                    const newHours = Math.floor(totalMinutes / 60);
+                    const newMinutes = totalMinutes % 60;
+                    
+                    timer.textContent = `${newHours}:${newMinutes.toString().padStart(2, '0')}`;
+                }
+            });
+        }
+        
+        // Update timers every minute in a real application
+        // For demo purposes, we're not actually starting the timer
+        // setInterval(updateTimers, 60000);
+    </script>
 </body>
 </html>

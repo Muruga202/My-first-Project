@@ -1,529 +1,294 @@
-const totalSlots = 12;
-let availableSlots = Array(totalSlots).fill(true);
-const form = document.querySelector("#parking-form");
-const tableBody = document.querySelector("#history tbody");
-const slotsContainer = document.querySelector(".parking-slots");
-const message = document.querySelector("#message");
-const feedbackContainer = document.querySelector("#feedback-container");
-const darkModeToggle = document.querySelector("#dark-mode-toggle");
-const searchInput = document.querySelector("#search-input");
-const feedbackForm = document.querySelector("#feedback-form");
-const feedbackTable = document.querySelector("#feedback-violations tbody");
-let violationCount = 0;
-let activeTimers = {};
-const alarmSound = new Audio("sounds/alarm.mp3");
+// Global variables
+let parkingSlots = [];
+const TOTAL_SLOTS = 20;
+let timerIntervals = {};
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-// Initialize the application
-function initApp() {
-    renderSlots();
-    fetchTemperatureData();
-    fetchWeatherData();
-    fetchParkingViolations();
-    
-    // Request notification permissions
-    if (Notification.permission !== "granted" && Notification.permission !== "denied") {
-        Notification.requestPermission();
-    }
-}
-
-// Display Parking Violations in Table
-function displayParkingViolations(data) {
-    const tableBody = document.querySelector("#nycViolationsTable tbody");
-    tableBody.innerHTML = ""; // Clear existing data
-
-    data.forEach(violation => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${violation.plate || "N/A"}</td>
-            <td>${violation.vehicle_make || "Unknown"}</td>
-            <td>${violation.issue_date || "N/A"}</td>
-            <td>${violation.violation_description || "N/A"}</td>
-            <td>${violation.fine_amount || "N/A"}</td>
-        `;
-        tableBody.appendChild(row);
-    });
-}
-
-// Fetch Parking Violations (Mock Implementation)
-async function fetchParkingViolations() {
-    // This would normally be an API call, but we'll use mock data
-    const mockData = [
-        {
-            plate: "KDA-389K",
-            vehicle_make: "Toyota",
-            issue_date: "2025-03-25",
-            violation_description: "No Parking Zone",
-            fine_amount: "Kshs 1,000/="
-        },
-        {
-            plate: "KCX-342L",
-            vehicle_make: "Honda",
-            issue_date: "2025-03-27",
-            violation_description: "Expired Meter",
-            fine_amount: "Kshs 5000/="
-        },
-        {
-            plate: "KDA-121G",
-            vehicle_make: "Ford",
-            issue_date: "2025-03-28",
-            violation_description: "Double Parking",
-            fine_amount: "Kshs 2,500/="
-        }
-    ];
-    
-    // Display the mock data
-    displayParkingViolations(mockData);
-}
-
-// Render Parking Slots
-function renderSlots() {
-    slotsContainer.innerHTML = "";
-    availableSlots.forEach((isAvailable, index) => {
-        const slot = document.createElement("div");
-        slot.classList.add("slot");
-        if (!isAvailable) slot.classList.add("occupied");
-        
-        slot.textContent = `Slot ${index + 1}`;
-        slotsContainer.appendChild(slot);
-    });
-}
-
-// Handle Parking Submission with Enhanced Validation
-form.addEventListener("submit", function (event) {
-    event.preventDefault();
-    
-    const ownerName = document.querySelector("#owner-name").value;
-    const carModel = document.querySelector("#car-model").value;
-    const regNumber = document.querySelector("#car-reg").value;
-    let duration = parseInt(document.querySelector("#duration").value, 10);
-    const phoneNumber = document.querySelector("#phone-number").value;
-    const vipCheck = document.querySelector("#vip-checkbox").checked;
-
-    const regPattern = /^[A-Z]{3}-\d{3}[A-Z]$/;
-    if (!regPattern.test(regNumber)) {
-        alert("Please enter registration in format ABC-123A");
-        return;
-    }
-    
-    
-    // Validate phone number (basic validation)
-    if (!/^\d{10}$/.test(phoneNumber)) {
-        alert("Please enter a valid 10-digit phone number");
-        return;
-    }
-    
-    if (isNaN(duration) || duration <= 0) {
-        alert("Please enter a valid positive number for duration.");
-        return;
-    }
-    
-    let slotIndex = availableSlots.indexOf(true);
-    if (slotIndex === -1) {
-        alert("No available slots.");
-        return;
-    }
-    
-    // If VIP, prioritize slots near entrance (assuming first slots are closer)
-    if (vipCheck && slotIndex > 2) {
-        // Try to find a VIP slot (first 3 slots)
-        for (let i = 0; i < 3; i++) {
-            if (availableSlots[i]) {
-                slotIndex = i;
-                break;
-            }
-        }
-    }
-    
-    availableSlots[slotIndex] = false;
-    message.textContent = `Spot ${slotIndex + 1} assigned!`;
-    message.style.color = "green";
-
-    const row = document.createElement("tr");
-    row.innerHTML = `
-        <td>${ownerName}</td>
-        <td>${carModel}</td>
-        <td>${regNumber}</td>
-        <td id="timer-${slotIndex}">${duration}:00</td>
-        <td>${phoneNumber}</td>
-        <td>Spot ${slotIndex + 1}${vipCheck ? ' (VIP)' : ''}</td>
-        <td>
-            <button onclick="signOut(${slotIndex}, this)">Sign Out</button>
-            <button class="delete-btn" onclick="deleteEntry(${slotIndex}, this)">Delete</button>
-            <label><input type="checkbox" id="extend-${slotIndex}" onchange="extendTime(${slotIndex})"> Extend</label>
-        </td>
-    `;
-    tableBody.appendChild(row);
-
-    startCountdown(slotIndex, duration);
-    renderSlots();
-    form.reset();
-    
-    // Show browser notification
-    if (Notification.permission === "granted") {
-        new Notification("Parking Assigned", {
-            body: `Your car has been assigned to Spot ${slotIndex + 1} for ${duration} minutes.`,
-            icon: "parking-icon.png"
-        });
-    }
-});
-
-// Enhanced Countdown with Notifications
-function startCountdown(slotIndex, duration) {
-    let minutes = duration;
-    let seconds = 0;
-    
-    // Notify when 5 minutes remain
-    const notifyAt = 5; // minutes
-    let notificationShown = false;
-
-    activeTimers[slotIndex] = setInterval(() => {
-        if (minutes === 0 && seconds === 0) {
-            clearInterval(activeTimers[slotIndex]);
-            availableSlots[slotIndex] = true;
-            renderSlots();
-            document.querySelector(`#timer-${slotIndex}`).textContent = "Expired";
-            document.querySelector(`#timer-${slotIndex}`).style.color = "red";
-            document.querySelector(`#timer-${slotIndex}`).style.fontWeight = "bold";
-
-            // Use the blinkScreenRed function
-            blinkScreenRed();
-            
-            // Play an alarm sound
-            alarmSound.play();
-            
-            // Show browser notification
-            if (Notification.permission === "granted") {
-                new Notification("Parking Expired", {
-                    body: `Parking in Slot ${slotIndex + 1} has expired!`,
-                    icon: "parking-icon.png"
-                });
-            }
-            
-            return;
-        }
-
-        // Show notification when 5 minutes remain
-        if (minutes === notifyAt && seconds === 0 && !notificationShown) {
-            notificationShown = true;
-            if (Notification.permission === "granted") {
-                new Notification("Parking Almost Expired", {
-                    body: `Only ${notifyAt} minutes remaining for Slot ${slotIndex + 1}!`,
-                    icon: "parking-icon.png"
-                });
-            }
-        }
-
-        if (seconds === 0) {
-            minutes--;
-            seconds = 59;
-        } else {
-            seconds--;
-        }
-
-        const timerElement = document.querySelector(`#timer-${slotIndex}`);
-        if (timerElement) {
-            timerElement.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-            
-            // Change color as time gets low
-            if (minutes < 5) {
-                timerElement.style.color = "orange";
-            }
-            if (minutes < 2) {
-                timerElement.style.color = "red";
-            }
-        }
-    }, 1000);
-}
-
-// Blinking Red Effect When Time Expires
-function blinkScreenRed() {
-    let blinkCount = 0;
-    const interval = setInterval(() => {
-        document.body.style.backgroundColor = blinkCount % 2 === 0 ? "red" : "";
-        blinkCount++;
-        if (blinkCount === 6) {
-            clearInterval(interval);
-            
-            // Reset background if dark mode isn't active
-            if (!document.body.classList.contains("dark-mode")) {
-                document.body.style.backgroundColor = "";
-            }
-        }
-    }, 500);
-}
-
-// Extend Parking Time
-function extendTime(slotIndex) {
-    const extendCheckbox = document.querySelector(`#extend-${slotIndex}`);
-    if (extendCheckbox.checked) {
-        let additionalTime = prompt("Enter additional time in minutes:");
-        additionalTime = parseInt(additionalTime, 10);
-        if (!isNaN(additionalTime) && additionalTime > 0) {
-            // Get current time values
-            const timerElement = document.querySelector(`#timer-${slotIndex}`);
-            const timeText = timerElement.textContent;
-            let currentMinutes = 0;
-            let currentSeconds = 0;
-            
-            if (timeText !== "Expired") {
-                const timeParts = timeText.split(":");
-                currentMinutes = parseInt(timeParts[0], 10);
-                currentSeconds = parseInt(timeParts[1], 10);
-            }
-            
-            // Calculate new total time
-            const totalSeconds = (currentMinutes * 60 + currentSeconds) + (additionalTime * 60);
-            const newMinutes = Math.floor(totalSeconds / 60);
-            const newSeconds = totalSeconds % 60;
-            
-            // Reset timer
-            clearInterval(activeTimers[slotIndex]);
-            
-            // Update display
-            timerElement.textContent = `${newMinutes}:${newSeconds < 10 ? "0" : ""}${newSeconds}`;
-            timerElement.style.color = ""; // Reset color
-            
-            // If slot was expired, make it occupied again
-            if (availableSlots[slotIndex]) {
-                availableSlots[slotIndex] = false;
-                renderSlots();
-            }
-            
-            // Start new countdown
-            startCountdown(slotIndex, newMinutes, newSeconds);
-        } else {
-            alert("Invalid input. Extension not applied.");
-        }
-        extendCheckbox.checked = false; // Reset checkbox
-    }
-}
-
-// Sign Out & Reset Slot
-function signOut(slotIndex, button) {
-    const now = new Date().toLocaleTimeString();
-    button.closest("td").innerHTML = `Signed out at ${now}`;
-    clearInterval(activeTimers[slotIndex]);
-    availableSlots[slotIndex] = true;
-    
-    const timerElement = document.querySelector(`#timer-${slotIndex}`);
-    if (timerElement) {
-        timerElement.textContent = "Completed";
-        timerElement.style.color = "green";
-    }
-    
-    renderSlots();
-}
-
-// Delete Entry & Reset Slot
-function deleteEntry(slotIndex, button) {
-    if (confirm("Are you sure you want to delete this entry?")) {
-        button.closest("tr").remove();
-        clearInterval(activeTimers[slotIndex]);
-        availableSlots[slotIndex] = true;
-        renderSlots();
-    }
-}
-
-// Dark Mode Toggle
-darkModeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-    
-    // Save preference to localStorage
-    const isDarkMode = document.body.classList.contains("dark-mode");
-    localStorage.setItem("darkMode", isDarkMode);
-});
-
-// Load saved dark mode preference
-if (localStorage.getItem("darkMode") === "true") {
-    document.body.classList.add("dark-mode");
-}
-
-// Search Filter for History
-searchInput.addEventListener("input", (event) => {
-    const query = event.target.value.toLowerCase();
-    Array.from(tableBody.children).forEach(row => {
-        const carModel = row.children[1].textContent.toLowerCase();
-        const regNumber = row.children[2].textContent.toLowerCase();
-        const ownerName = row.children[0].textContent.toLowerCase();
-        
-        // Search across multiple columns
-        const matchesSearch = 
-            carModel.includes(query) || 
-            regNumber.includes(query) || 
-            ownerName.includes(query);
-            
-        row.style.display = matchesSearch ? "" : "none";
-    });
-});
-
-// Feedback Form Handler
-feedbackForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-    
-    const plateNumber = document.querySelector("#plate-number").value;
-    const feedback = document.querySelector("#feedback").value;
-    const isNegative = document.querySelector("#negative-feedback-checkbox").checked;
-    const currentTime = new Date().toLocaleTimeString();
-    
-    violationCount++;
-    
-    const row = document.createElement("tr");
-    row.innerHTML = `
-        <td>${violationCount}</td>
-        <td>${plateNumber}</td>
-        <td class="${isNegative ? 'negative-feedback' : ''}">${feedback}</td>
-        <td>${currentTime}</td>
-    `;
-    
-    feedbackTable.appendChild(row);
-    feedbackForm.reset();
-    
-    // Show confirmation message
-    feedbackContainer.textContent = "Thank you for your feedback!";
-    feedbackContainer.style.color = "green";
-    setTimeout(() => {
-        feedbackContainer.textContent = "";
-    }, 3000);
-});
-
-// Fetch Temperature Data with Error Handling
-async function fetchTemperatureData() {
-    try {
-        const response = await fetch('https://api.data.gov.sg/v1/environment/air-temperature');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        displayTemperatureData(data);
-    } catch (error) {
-        console.error("Error fetching temperature data:", error);
-        // Display user-friendly error message
-        const tableBody = document.querySelector("#temperatureDataTable tbody");
-        tableBody.innerHTML = `<tr><td colspan="3">Unable to load temperature data. Please try again later.</td></tr>`;
-    }
-}
-
-// Display Temperature Data
-function displayTemperatureData(data) {
-    const tableBody = document.querySelector("#temperatureDataTable tbody");
-    tableBody.innerHTML = ""; // Clear existing data
-
-    // Check if data has the expected structure
-    if (data.items && data.items.length > 0 && data.items[0].readings) {
-        data.items[0].readings.forEach(reading => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${reading.value || "N/A"}°C</td>
-                <td>${new Date(data.items[0].timestamp).toLocaleString() || "N/A"}</td>
-            `;
-            tableBody.appendChild(row);
-        });
-    } else {
-        // If API returns unexpected format, use mock data
-        const mockData = [
-            { temperature: "28.5°C", timestamp: new Date().toLocaleString() },
-            { temperature: "27.8°C", timestamp: new Date().toLocaleString() }
-        ];
-        
-        mockData.forEach(item => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${item.station}</td>
-                <td>${item.temperature}</td>
-                <td>${item.timestamp}</td>
-            `;
-            tableBody.appendChild(row);
-        });
-    }
-}
-
-// Fetch Weather Data with Error Handling
-async function fetchWeatherData() {
-    const apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=temperature_2m_max,temperature_2m_min&timezone=GMT";
-
-    try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error("Failed to fetch weather data");
-        }
-
-        const data = await response.json();
-        displayWeatherData(data.daily);
-    } catch (error) {
-        console.error("Error fetching weather data:", error);
-        
-        // Display mock data on error
-        const mockWeatherData = {
-            time: ["2025-03-30", "2025-03-31", "2025-04-01", "2025-04-02", "2025-04-03"],
-            temperature_2m_max: [22.5, 23.1, 21.8, 20.5, 22.0],
-            temperature_2m_min: [15.2, 14.8, 13.9, 14.2, 15.5]
-        };
-        
-        displayWeatherData(mockWeatherData);
-    }
-}
-
-// Display Weather Data
-function displayWeatherData(dailyData) {
-    const weatherTableBody = document.querySelector("#weather-table tbody");
-    weatherTableBody.innerHTML = ""; // Clear existing data
-
-    if (dailyData && dailyData.time) {
-        dailyData.time.forEach((date, index) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${date}</td>
-                <td>${dailyData.temperature_2m_max[index]}°C</td>
-                <td>${dailyData.temperature_2m_min[index]}°C</td>
-            `;
-            weatherTableBody.appendChild(row);
-        });
-    } else {
-        const row = document.createElement("tr");
-        row.innerHTML = `<td colspan="3">No weather data available</td>`;
-        weatherTableBody.appendChild(row);
-    }
-}
-
-// Export parking data to CSV
-function exportToCsv() {
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Owner Name,Car Model,Registration,Time Left,Phone Number,Slot\n";
-    
-    Array.from(tableBody.children).forEach(row => {
-        const ownerName = row.children[0].textContent;
-        const carModel = row.children[1].textContent;
-        const regNumber = row.children[2].textContent;
-        const timeLeft = row.children[3].textContent;
-        const phoneNumber = row.children[4].textContent;
-        const slot = row.children[5].textContent;
-        
-        csvContent += `"${ownerName}","${carModel}","${regNumber}","${timeLeft}","${phoneNumber}","${slot}"\n`;
-    });
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `parking_data_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-// Add export button to UI
-function addExportButton() {
-    const exportButton = document.createElement("button");
-    exportButton.textContent = "Export Parking Data";
-    exportButton.classList.add("export-button");
-    exportButton.addEventListener("click", exportToCsv);
-    
-    // Insert after search container
-    const searchContainer = document.querySelector(".search-container");
-    searchContainer.parentNode.insertBefore(exportButton, searchContainer.nextSibling);
-}
-
-// Initialize the application when DOM is loaded
+// DOM Elements
 document.addEventListener('DOMContentLoaded', () => {
-    initApp();
-    addExportButton();
+    initializeParkingSystem();
+    loadParkingData();
+    setupEventListeners();
+    requestNotificationPermission();
 });
+
+// Initialize parking system
+function initializeParkingSystem() {
+    const parkingSlotsContainer = document.querySelector('.parking-slots');
+    for (let i = 1; i <= TOTAL_SLOTS; i++) {
+        const row = String.fromCharCode(65 + Math.floor((i-1)/4));
+        const number = ((i-1) % 4) + 1;
+        const slotId = `${row}${number}`;
+        
+        const slot = createSlotElement(slotId);
+        parkingSlotsContainer.appendChild(slot);
+        parkingSlots.push({
+            id: slotId,
+            status: 'available',
+            licenseId: null,
+            checkInTime: null,
+            duration: null
+        });
+    }
+}
+
+// Create slot element
+function createSlotElement(slotId) {
+    const slot = document.createElement('div');
+    slot.className = 'slot';
+    slot.id = `slot-${slotId}`;
+    slot.innerHTML = `
+        <div class="slot-id">${slotId}</div>
+        <div class="timer-display"></div>
+        <div class="vehicle-info"></div>
+    `;
+    return slot;
+}
+
+// Load parking data from JSON server
+async function loadParkingData() {
+    try {
+        const response = await fetch('http://localhost:3000/parkingSlots');
+        const data = await response.json();
+        updateParkingDisplay(data);
+    } catch (error) {
+        console.error('Error loading parking data:', error);
+        showMessage('Failed to load parking data', 'error');
+    }
+}
+
+// Update parking display
+function updateParkingDisplay(slots) {
+    slots.forEach(slot => {
+        const slotElement = document.querySelector(`#slot-${slot.id}`);
+        if (slotElement) {
+            slotElement.className = `slot ${slot.status}`;
+            if (slot.status === 'occupied') {
+                updateSlotInfo(slot);
+                startTimer(slot.id, slot.duration);
+            }
+        }
+    });
+}
+
+// Handle parking form submission
+async function handleParkingSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const parkingData = {
+        licenseId: formData.get('license'),
+        vehicleType: formData.get('vehicle-type'),
+        duration: parseInt(formData.get('duration')),
+        isVIP: formData.get('vip') === 'on'
+    };
+
+    try {
+        const slot = await assignParkingSlot(parkingData);
+        if (slot) {
+            showMessage(`Parking slot ${slot.id} assigned successfully`, 'success');
+            updateParkingDisplay([slot]);
+        }
+    } catch (error) {
+        showMessage(error.message, 'error');
+    }
+}
+
+// Assign parking slot
+async function assignParkingSlot(parkingData) {
+    const availableSlot = parkingSlots.find(slot => slot.status === 'available');
+    if (!availableSlot) {
+        throw new Error('No parking slots available');
+    }
+
+    const updatedSlot = {
+        ...availableSlot,
+        status: 'occupied',
+        licenseId: parkingData.licenseId,
+        checkInTime: new Date().toISOString(),
+        duration: parkingData.duration
+    };
+
+    try {
+        const response = await fetch(`http://localhost:3000/parkingSlots/${updatedSlot.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedSlot)
+        });
+        return await response.json();
+    } catch (error) {
+        throw new Error('Failed to assign parking slot');
+    }
+}
+
+// Add these new timer-related functions after your existing timer functions
+
+function formatTimeLeft(timeLeft) {
+    const hours = Math.floor(timeLeft / 3600000);
+    const minutes = Math.floor((timeLeft % 3600000) / 60000);
+    const seconds = Math.floor((timeLeft % 60000) / 1000);
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Update the existing startTimer function
+function startTimer(slotId, duration) {
+    if (timerIntervals[slotId]) {
+        clearInterval(timerIntervals[slotId]);
+    }
+
+    const endTime = new Date();
+    endTime.setMinutes(endTime.getMinutes() + duration);
+
+    const timerDisplay = document.querySelector(`#slot-${slotId} .timer-display`);
+    if (timerDisplay) {
+        timerDisplay.classList.add('active-timer');
+    }
+
+    function updateTimer() {
+        const now = new Date();
+        const timeLeft = endTime - now;
+
+        if (timeLeft <= 0) {
+            handleTimerExpiration(slotId);
+        } else {
+            updateTimerDisplay(slotId, timeLeft);
+            
+            // Warning when 5 minutes remaining
+            if (timeLeft <= 300000 && timeLeft > 299000) { // 5 minutes
+                showNotification(`⚠️ 5 minutes remaining for slot ${slotId}`);
+                timerDisplay.classList.add('warning');
+            }
+            // Critical warning when 1 minute remaining
+            if (timeLeft <= 60000 && timeLeft > 59000) { // 1 minute
+                showNotification(`🚨 1 minute remaining for slot ${slotId}`);
+                timerDisplay.classList.add('critical');
+                playWarningBeep();
+            }
+        }
+    }
+
+    // Initial update
+    updateTimer();
+    // Update every second
+    timerIntervals[slotId] = setInterval(updateTimer, 1000);
+}
+
+// Update the existing updateTimerDisplay function
+function updateTimerDisplay(slotId, timeLeft) {
+    const timerDisplay = document.querySelector(`#slot-${slotId} .timer-display`);
+    if (timerDisplay) {
+        timerDisplay.textContent = formatTimeLeft(timeLeft);
+        
+        // Add visual indicator for remaining time
+        const percentageLeft = (timeLeft / (timerIntervals[slotId].initialDuration * 60000)) * 100;
+        timerDisplay.style.background = `linear-gradient(to right, #4CAF50 ${percentageLeft}%, #ff6b6b ${percentageLeft}%)`;
+    }
+}
+
+// Update the existing handleTimerExpiration function
+function handleTimerExpiration(slotId) {
+    clearInterval(timerIntervals[slotId]);
+    const slot = document.querySelector(`#slot-${slotId}`);
+    const timerDisplay = slot?.querySelector('.timer-display');
+    
+    if (slot && timerDisplay) {
+        slot.classList.add('expired');
+        timerDisplay.textContent = 'EXPIRED';
+        timerDisplay.classList.remove('active-timer', 'warning', 'critical');
+        timerDisplay.classList.add('expired');
+        
+        // Play alarm sound
+        playAlarmSound();
+        
+        // Show notification
+        showNotification(`🚫 Parking time has EXPIRED for slot ${slotId}`);
+        
+        // Flash the slot
+        flashExpiredSlot(slot);
+    }
+}
+
+// Add these new utility functions
+function playWarningBeep() {
+    const beep = new Audio('sounds/warning-beep.mp3');
+    beep.volume = 0.5;
+    beep.play().catch(error => console.error('Error playing warning beep:', error));
+}
+
+function flashExpiredSlot(slot) {
+    let flashCount = 0;
+    const flashInterval = setInterval(() => {
+        slot.classList.toggle('flash');
+        flashCount++;
+        
+        if (flashCount >= 10) { // Flash 5 times (10 toggles)
+            clearInterval(flashInterval);
+            slot.classList.add('expired');
+            slot.classList.remove('flash');
+        }
+    }, 500); // Toggle every 500ms
+}
+
+// Add this CSS to your stylesheet
+// Utility functions
+function showMessage(message, type = 'info') {
+    const messageElement = document.getElementById('message');
+    messageElement.textContent = message;
+    messageElement.className = type;
+    setTimeout(() => {
+        messageElement.textContent = '';
+        messageElement.className = '';
+    }, 3000);
+}
+
+async function requestNotificationPermission() {
+    if ('Notification' in window) {
+        await Notification.requestPermission();
+    }
+}
+
+function showNotification(message) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Smart Parking System', { body: message });
+    }
+}
+
+function playAlarmSound() {
+    const audio = new Audio('sounds/alarm.mp3');
+    audio.play().catch(error => console.error('Error playing sound:', error));
+}
+
+// Dark mode toggle
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode);
+}
+
+// Event listeners setup
+function setupEventListeners() {
+    document.getElementById('parking-form').addEventListener('submit', handleParkingSubmit);
+    document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+    document.getElementById('search-input').addEventListener('input', handleSearch);
+}
+
+// Search functionality
+function handleSearch(event) {
+    const searchTerm = event.target.value.toLowerCase();
+    const slots = document.querySelectorAll('.slot');
+    
+    slots.forEach(slot => {
+        const vehicleInfo = slot.querySelector('.vehicle-info').textContent.toLowerCase();
+        if (vehicleInfo.includes(searchTerm) || slot.id.toLowerCase().includes(searchTerm)) {
+            slot.style.display = 'block';
+        } else {
+            slot.style.display = 'none';
+        }
+    });
+}
+
+// Initialize dark mode from localStorage
+if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+}
