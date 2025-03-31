@@ -19,12 +19,12 @@ This is a simple car parking management system built using HTML, CSS, and JavaSc
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Muruga202/car-parking-management-system.git
+   git clone https://github.com/Muruga202/Smart-Parking-System.git
    ```
 
 2. **Navigate to the project directory**:
    ```bash
-   cd car-parking-management-system
+   cd Smart-parking-management-system
    ```
 
 3. **Open the `index.html` file in your web browser**:
